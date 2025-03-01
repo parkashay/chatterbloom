@@ -17,11 +17,15 @@ export const SuggestedUsers = () => {
     navigate(routes.chat.createPath(userId, recieverId));
   };
 
+  if (!users) {
+    return;
+  }
+
   return (
     <div className="space-y-4 p-3">
       <h1 className="text-primary text-xl font-semibold">Suggested Users</h1>
       {users?.map((user) => (
-        <div className="flex gap-3">
+        <div className="flex gap-3" key={user._id}>
           <Avatar className="mt-1">
             <AvatarImage src={user?.image} />
             <AvatarFallback>({user?.name?.charAt(0)})</AvatarFallback>

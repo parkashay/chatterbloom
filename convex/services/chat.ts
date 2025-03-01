@@ -1,3 +1,4 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 import { mutation, query } from "~/_generated/server";
 import schema from "~/schema";
@@ -30,4 +31,23 @@ export const getMessages = query({
 
 export const generateUploadUrl = mutation(async (ctx) => {
   return await ctx.storage.generateUploadUrl();
+});
+
+export const getLatestMessages = query({
+  args: {},
+  async handler(ctx) {
+    const authedUserId = await getAuthUserId(ctx);
+    const messages = await ctx.db.query("messages").order("desc").collect();
+    const usersMap = new Map<string, (typeof messages)[number]>();
+    for (const message of messages) {
+      if (usersMap.size >= 5) {
+        break;
+      }
+      if (usersMap.has(message.participants.toString())) {
+        continue;
+      }
+      usersMap.set(message.participants.toString(), message);
+    }
+    return Array.from(usersMap.values());
+  },
 });

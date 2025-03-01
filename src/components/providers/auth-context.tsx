@@ -1,10 +1,11 @@
 import { useQuery } from "convex/react";
 import { createContext, PropsWithChildren, useEffect, useState } from "react";
 import { api } from "~/_generated/api";
+import { Id } from "~/_generated/dataModel";
 
-interface AuthContextState {
+export interface AuthContextState {
   user?: {
-    id: string;
+    id: Id<"users">;
     name?: string;
     email?: string;
     avatar?: string;
