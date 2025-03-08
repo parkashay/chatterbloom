@@ -43,6 +43,7 @@ export default function ChatPage() {
               <ChatBubble
                 key={message._id}
                 variant={message.senderId === user?.id ? "sent" : "received"}
+                className="animate-in slide-in-from-bottom"
               >
                 <ChatBubbleAvatar
                   className="h-8 w-8 shrink-0"

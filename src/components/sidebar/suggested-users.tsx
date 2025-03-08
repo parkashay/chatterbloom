@@ -43,9 +43,6 @@ export const SuggestedUsers = () => {
               >
                 Message <Send className="size-4" />
               </Button>
-              {/* <Button size="sm" variant="outline">
-                Decline
-              </Button> */}
             </div>
           </div>
         </div>

@@ -26,7 +26,7 @@ export function ChatHeader() {
   const { signOut } = useAuthActions();
 
   return (
-    <header className="border-border/30 flex w-full items-center justify-between border-b px-4 py-3 shadow-sm">
+    <header className="border-border/30 flex w-full items-center justify-between px-4 py-3">
       <div className="flex items-center">
         {reciever && (
           <div className="from-secondary-light to-secondary mr-3 flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br font-medium text-white shadow-sm">
@@ -40,9 +40,6 @@ export function ChatHeader() {
       </div>
 
       <div className="flex items-center space-x-3">
-        {/* <button className="text-secondary-foreground hover:text-primary hover:bg-accent/30 rounded-full p-1">
-          <Search className="h-5 w-5" />
-        </button> */}
         <DropdownMenu>
           <DropdownMenuTrigger>
             <User className="text-secondary-foreground hover:text-primary h-5 w-5" />
@@ -51,7 +48,11 @@ export function ChatHeader() {
             <DropdownMenuLabel>{user?.name}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Button variant="destructive" onClick={signOut}>
+              <Button
+                variant="destructive"
+                onClick={signOut}
+                className="cursor-pointer"
+              >
                 Log out
               </Button>
             </DropdownMenuItem>

@@ -1,13 +1,12 @@
-import { Doc } from "@convex-dev/auth/server";
-import { DataModel, Id } from "~/_generated/dataModel";
-import { AuthContextState } from "../providers/auth-context";
-import { useQuery } from "convex/react";
-import { api } from "~/_generated/api";
-import { Link } from "react-router";
-import { routes } from "@/routes/routes";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { cn } from "@/lib/utils";
 import { useChatPageParams } from "@/hooks/use-chat-page-params";
+import { cn } from "@/lib/utils";
+import { routes } from "@/routes/routes";
+import { useQuery } from "convex/react";
+import { Link } from "react-router";
+import { api } from "~/_generated/api";
+import { DataModel, Id } from "~/_generated/dataModel";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useSidebar } from "../ui/sidebar";
 
 interface Props {
   message: DataModel["messages"]["document"];
@@ -18,35 +17,41 @@ export const RecievedChat = ({ message, userId }: Props) => {
   const participant = useQuery(api.services.user.getSingleUser, {
     id: participantId,
   });
-
   const { recieverId } = useChatPageParams();
+
+  const { open: isSidebarExpanded } = useSidebar();
 
   return (
     <Link
       to={routes.chat.createPath(userId, participantId)}
       key={message._id}
       className={cn(
-        "group dark:hover:bg-accent flex items-start gap-3 border-b border-gray-100 p-4 transition-colors hover:bg-gray-50 dark:border-gray-800",
-        { "bg-secondary": participantId === recieverId },
+        "group hover:bg-accent flex items-start gap-3 border-b border-gray-100 p-4 transition-colors dark:border-gray-800",
+        { "bg-accent [&_*]:text-primary": participantId === recieverId },
+        "chat-container",
       )}
     >
       <Avatar className="h-10 w-10 ring-2 ring-gray-100 dark:ring-gray-700">
         <AvatarImage src={participant?.image} alt={participant?.name} />
-        <AvatarFallback className="bg-primary/10 text-primary">
+        <AvatarFallback className="bg-primary/10">
           {participant?.name?.charAt(0)}
         </AvatarFallback>
       </Avatar>
 
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <span className="font-medium text-gray-900 dark:text-gray-100">
+      <div
+        className={cn("flex flex-1 flex-col overflow-hidden", {
+          hidden: !isSidebarExpanded,
+        })}
+      >
+        <span className="conversation-participant font-medium">
           {participant?.name || "Unknown User"}
         </span>
 
-        <p className="line-clamp-2 text-sm text-gray-600 dark:text-gray-300">
+        <p className="line-clamp-2 text-sm">
           {message.body || "No message content"}
         </p>
 
-        <span className="mt-1 text-right text-[10px] text-gray-500 dark:text-gray-400">
+        <span className="mt-1 text-right text-[10px]">
           {new Date(message._creationTime).toLocaleString()}
         </span>
       </div>
