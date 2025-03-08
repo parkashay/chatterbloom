@@ -7,6 +7,7 @@ import { api } from "~/_generated/api";
 import { DataModel, Id } from "~/_generated/dataModel";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useSidebar } from "../ui/sidebar";
+import { ToolTipOnHover } from "../ui/tooltip-on-hover";
 
 interface Props {
   message: DataModel["messages"]["document"];
@@ -31,12 +32,17 @@ export const RecievedChat = ({ message, userId }: Props) => {
         "chat-container",
       )}
     >
-      <Avatar className="h-10 w-10 ring-2 ring-gray-100 dark:ring-gray-700">
-        <AvatarImage src={participant?.image} alt={participant?.name} />
-        <AvatarFallback className="bg-primary/10">
-          {participant?.name?.charAt(0)}
-        </AvatarFallback>
-      </Avatar>
+      <ToolTipOnHover
+        content={participant?.name}
+        shouldOpen={!isSidebarExpanded}
+      >
+        <Avatar className="h-10 w-10 ring-2 ring-gray-100 dark:ring-gray-700">
+          <AvatarImage src={participant?.image} alt={participant?.name} />
+          <AvatarFallback className="bg-primary/10">
+            {participant?.name?.charAt(0)}
+          </AvatarFallback>
+        </Avatar>
+      </ToolTipOnHover>
 
       <div
         className={cn("flex flex-1 flex-col overflow-hidden", {
