@@ -18,13 +18,13 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
-import { AuthContext } from "../providers/auth-context";
-import { NavUser } from "./nav-user";
-import { SuggestedUsers } from "./suggested-users";
 import { useQuery } from "convex/react";
 import { api } from "~/_generated/api";
 import { RecievedChat } from "../chat/recieved-chat";
+import { AuthContext } from "../providers/auth-context";
 import { Skeleton } from "../ui/skeleton";
+import { NavUser } from "./nav-user";
+import { SuggestedUsers } from "./suggested-users";
 
 // This is sample data
 const data = {

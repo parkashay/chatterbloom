@@ -18,7 +18,7 @@ export const SuggestedUsers = () => {
   };
 
   if (!users) {
-    return;
+    return null;
   }
 
   return (
