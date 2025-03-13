@@ -42,7 +42,7 @@ export function Login() {
         </h2>
 
         {/* Short description */}
-        <p className="text-muted mb-10 max-w-md text-center">
+        <p className="text-muted-foreground mb-10 max-w-md text-center">
           Experience a chat platform designed with a personal touch. Connect
           with friends and make new ones.
         </p>

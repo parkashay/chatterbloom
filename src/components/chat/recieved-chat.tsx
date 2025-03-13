@@ -8,13 +8,18 @@ import { DataModel, Id } from "~/_generated/dataModel";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useSidebar } from "../ui/sidebar";
 import { ToolTipOnHover } from "../ui/tooltip-on-hover";
+import { Skeleton } from "../ui/skeleton";
 
 interface Props {
   message: DataModel["messages"]["document"];
   userId: Id<"users">;
+  isUnread?: boolean;
 }
 export const RecievedChat = ({ message, userId }: Props) => {
-  const participantId = message.participants.filter((i) => i !== userId)[0];
+  const participantId = message.participants.find((id) => id !== userId);
+
+  if (!participantId) return <Skeleton className="h-6 w-full" />;
+
   const participant = useQuery(api.services.user.getSingleUser, {
     id: participantId,
   });
@@ -22,16 +27,27 @@ export const RecievedChat = ({ message, userId }: Props) => {
 
   const { open: isSidebarExpanded } = useSidebar();
 
+  const isChatSelected = participantId === recieverId;
+
+  const isUnread = !message.read && message.senderId !== userId;
+
   return (
     <Link
       to={routes.chat.createPath(userId, participantId)}
       key={message._id}
       className={cn(
-        "group hover:bg-accent flex items-start gap-3 border-b border-gray-100 p-4 transition-colors dark:border-gray-800",
-        { "bg-accent [&_*]:text-primary": participantId === recieverId },
+        "group hover:bg-accent relative flex items-start gap-3 border-b border-gray-100 p-4 transition-colors dark:border-gray-800",
+        { "bg-accent [&_*]:text-primary": isChatSelected },
+        { "[&_*]:font-semibold": isUnread },
         "chat-container",
       )}
     >
+      {!isChatSelected && isUnread && (
+        <span className="bg-primary absolute top-5 right-2 z-1 flex aspect-square w-5 -translate-y-1/2 items-center justify-center rounded-full text-white">
+          1
+        </span>
+      )}
+
       <ToolTipOnHover
         content={participant?.name}
         shouldOpen={!isSidebarExpanded}
@@ -49,7 +65,11 @@ export const RecievedChat = ({ message, userId }: Props) => {
           hidden: !isSidebarExpanded,
         })}
       >
-        <span className="conversation-participant font-medium">
+        <span
+          className={cn("conversation-participant", {
+            "font-medium": isChatSelected,
+          })}
+        >
           {participant?.name || "Unknown User"}
         </span>
 

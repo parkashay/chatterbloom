@@ -3,6 +3,7 @@ import { useContext } from "react";
 
 export function ChatPageNoReciever() {
   const { user } = useContext(AuthContext);
+
   return (
     <div className="flex min-h-[40vh] items-center justify-center px-4">
       <div className="bg-background border-border w-full max-w-md rounded-lg border p-6 shadow-md">

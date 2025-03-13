@@ -11,6 +11,7 @@ export const sendMessage = mutation({
       participants: args.participants.sort(),
       body: args.body,
       type: args.type,
+      read: args.read,
     });
   },
 });
@@ -37,11 +38,14 @@ export const getLatestMessages = query({
   args: {},
   async handler(ctx) {
     const authedUserId = await getAuthUserId(ctx);
+    if (!authedUserId) {
+      return [];
+    }
     const messages = await ctx.db.query("messages").order("desc").collect();
     const usersMap = new Map<string, (typeof messages)[number]>();
     for (const message of messages) {
-      if (usersMap.size >= 5) {
-        break;
+      if (!message.participants.includes(authedUserId)) {
+        continue;
       }
       if (usersMap.has(message.participants.toString())) {
         continue;
@@ -49,5 +53,12 @@ export const getLatestMessages = query({
       usersMap.set(message.participants.toString(), message);
     }
     return Array.from(usersMap.values());
+  },
+});
+
+export const readMessage = mutation({
+  args: { messageId: v.id("messages") },
+  handler: (ctx, args) => {
+    ctx.db.patch(args.messageId, { read: true });
   },
 });

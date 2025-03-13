@@ -1,6 +1,5 @@
 import { authTables } from "@convex-dev/auth/server";
-import { defineSchema, defineTable } from "convex/server";
-import { v } from "convex/values";
+import { defineSchema } from "convex/server";
 import { messageSchema } from "./schemas/message";
 
 const schema = defineSchema({

@@ -10,6 +10,7 @@ interface ChatBubbleProps {
   layout?: "default" | "ai";
   className?: string;
   children: React.ReactNode;
+  ref?: React.RefObject<HTMLDivElement> | React.RefCallback<HTMLDivElement>;
 }
 
 export function ChatBubble({
@@ -20,7 +21,7 @@ export function ChatBubble({
   return (
     <div
       className={cn(
-        "mb-4 flex items-start gap-2",
+        "mb-4 flex items-end gap-2",
         variant === "sent" && "flex-row-reverse",
         className,
       )}
@@ -46,8 +47,10 @@ export function ChatBubbleMessage({
   return (
     <div
       className={cn(
-        "rounded-lg p-3",
-        variant === "sent" ? "bg-primary text-primary-foreground" : "bg-muted",
+        "rounded-full px-4 py-2",
+        variant === "sent"
+          ? "bg-primary text-primary-foreground rounded-br-none"
+          : "bg-muted rounded-bl-none",
         className,
       )}
     >

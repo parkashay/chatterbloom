@@ -6,4 +6,5 @@ export const messageSchema = defineTable({
   participants: v.array(v.id("users")),
   body: v.string(),
   type: v.string(),
+  read: v.boolean(),
 }).index("by_participants", ["participants"]);

@@ -76,7 +76,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <RecievedChat
                   message={message}
                   userId={user.id}
-                  key={user.id}
+                  key={message._id}
                 />
               );
             })}

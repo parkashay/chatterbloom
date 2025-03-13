@@ -4,18 +4,17 @@ import {
   ChatBubbleMessage,
 } from "@/components/chat/chat-bubble";
 import { MessagesList } from "@/components/chat/chat-message-list";
+import { MessageReadHandler } from "@/components/chat/MessageReadHandler";
 import { NewMessage } from "@/components/chat/new-message";
-import { AuthContext } from "@/components/providers/auth-context";
 import { useChatPageParams } from "@/hooks/use-chat-page-params";
 import { useQuery } from "convex/react";
-import { useContext, useEffect } from "react";
+import { RefCallback, useCallback } from "react";
 import { api } from "~/_generated/api";
 import { Id } from "~/_generated/dataModel";
 
 export default function ChatPage() {
   const { userId, recieverId } = useChatPageParams();
 
-  const { user } = useContext(AuthContext);
   const reciever = useQuery(api.services.user.getSingleUser, {
     id: recieverId,
   });
@@ -25,52 +24,70 @@ export default function ChatPage() {
     participants: [userId as Id<"users">, recieverId as Id<"users">],
   });
 
-  useEffect(() => {
-    const newMessageIndicator = document.getElementById(
-      "new-message-indicator",
-    );
-    if (newMessageIndicator) {
-      newMessageIndicator.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages?.length]);
+  const scrollCallback: RefCallback<HTMLDivElement> = useCallback(
+    (node) => {
+      if (node) {
+        node.scrollIntoView({ behavior: "smooth" });
+      }
+    },
+    [messages],
+  );
 
   return (
     <div>
       <section className="h-full overflow-y-hidden">
         <MessagesList>
-          {messages?.map((message) => {
+          {messages?.map((message, index) => {
+            const senderId = message.senderId;
+            const nextSenderId = messages[index + 1]?.senderId;
             return (
               <ChatBubble
                 key={message._id}
-                variant={message.senderId === user?.id ? "sent" : "received"}
+                variant={message.senderId === userId ? "sent" : "received"}
                 className="animate-in slide-in-from-bottom"
               >
-                <ChatBubbleAvatar
-                  className="h-8 w-8 shrink-0"
-                  src={
-                    message.senderId === user?.id
-                      ? user?.avatar
-                      : reciever?.image
-                  }
-                  fallback={
-                    message.senderId === user?.id
-                      ? user?.name?.charAt(0)
-                      : reciever?.name?.charAt(0)
-                  }
-                />
+                {message.senderId === userId ? null : (
+                  <MessageReadHandler
+                    messageId={message._id}
+                    read={message.read}
+                  />
+                )}
+                {message.senderId === userId ? null : (
+                  <ChatAvatar
+                    shouldShow={senderId !== nextSenderId}
+                    fallback={reciever?.name?.charAt(0) || ""}
+                    src={reciever?.image}
+                  />
+                )}
 
                 <ChatBubbleMessage
-                  variant={message.senderId === user?.id ? "sent" : "received"}
+                  variant={message.senderId === userId ? "sent" : "received"}
                 >
                   {message.body}
                 </ChatBubbleMessage>
               </ChatBubble>
             );
           })}
-          <div id="new-message-indicator" />
+          <div ref={scrollCallback} />
         </MessagesList>
       </section>
       <NewMessage />
     </div>
+  );
+}
+
+interface AvatarProps {
+  shouldShow: boolean;
+  fallback: string;
+  src?: string;
+}
+function ChatAvatar({ shouldShow, src, fallback }: AvatarProps) {
+  if (!shouldShow) return <div className="size-6" />;
+  return (
+    <ChatBubbleAvatar
+      className="size-6 shrink-0"
+      src={src}
+      fallback={fallback}
+    />
   );
 }
